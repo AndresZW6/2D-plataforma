@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
+    public static PlayerControl instance;
     //Variables a declarar para utilizar en el script
 
     //Variable de velocidad de movimiento
@@ -27,6 +28,14 @@ public class PlayerControl : MonoBehaviour
 
     //Declaramos objetos para interaccion con colliders o disparadores
     public GameObject cuadrado, circulo, capsula, pressF;
+
+    public float knockBackLenght, knockBackForce;
+    private float knockBackCounter;
+
+    private void Awake()
+    {
+        instance = this;
+    }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,6 +53,9 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(knockBackCounter <= 0)
+        {
+
         //Desplazamiento lateral
         theRB.linearVelocity = new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), theRB.linearVelocity.y);
 
@@ -80,9 +92,22 @@ public class PlayerControl : MonoBehaviour
             theSR.flipX = false;
         }
 
+        }else
+        {
+            knockBackCounter -= Time.deltaTime;
+            if(!theSR.flipX)
+            {
+                theRB.linearVelocity = new Vector2(-knockBackForce, theRB.linearVelocity.y);
+            }
+            else
+            {
+                theRB.linearVelocity = new Vector2(knockBackForce, theRB.linearVelocity.y);
+            }
+        }     
+
         //Ejecucion de animaciones de acuerdo a los parametros asignados
         anim.SetFloat("moveSpeed", Mathf.Abs(theRB.linearVelocity.x));
-        anim.SetBool("isGrounded", isGrounded);
+        anim.SetBool("isGrounded", isGrounded);       
     }
 
     //Funcion al entrar a un disparador/collider
@@ -142,5 +167,13 @@ public class PlayerControl : MonoBehaviour
                 SceneManager.LoadScene("Game_002");
             }
         }
+    } 
+    
+    public void KnockBack()
+    {
+        knockBackCounter = knockBackLenght;
+        theRB.linearVelocity = new Vector2(0f, knockBackForce);
+
+        anim.SetTrigger("Damage");
     }
 } 

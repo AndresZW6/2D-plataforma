@@ -1,0 +1,27 @@
+using UnityEngine;
+
+public class DamagePlayer : MonoBehaviour
+{
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    //Funcion de Trigger con Tags
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+        {           
+            //FindObjectOfType<PlayerHealthSystem>().DealDamage();
+
+            PlayerHealthSystem.instance.DealDamage();
+        }
+    }
+}
